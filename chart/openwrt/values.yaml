@@ -1,0 +1,57 @@
+image:
+  repository: openwrt-k3s
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Multus: drei physische Interfaces via host-device komplett in den Pod verschieben
+hostInterfaces:
+  - name: wlp3s0
+    nadName: openwrt-wlp3s0
+  - name: enp2s0
+    nadName: openwrt-enp2s0
+  - name: enp4s0f3u1u4
+    nadName: openwrt-enp4s0
+
+# Zwei veth-Paare (Multus bridge-CNI legt jeweils ein veth-Paar an,
+# Pod-seitiges Interface trägt den gewünschten Namen)
+vethInterfaces:
+  - nadName: openwrt-k3s
+    ifName: veth-openwrtk3s
+    bridge: br-openwrtk3s
+    subnet: "10.200.0.0/24"
+  - nadName: openwrt-mgmt
+    ifName: veth-openwrtmgmt
+    bridge: br-openwrtmgmt
+    subnet: "10.201.0.0/24"
+
+security:
+  privileged: false
+  capabilities:
+    add:
+      - NET_ADMIN
+      - NET_RAW
+    drop:
+      - ALL
+
+persistence:
+  overlay:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+    mountPath: /overlay
+  config:
+    enabled: true
+    size: 512Mi
+    storageClass: ""
+    mountPath: /etc/config
+
+rfkill:
+  hostPath: /dev/rfkill
+  containerPath: /dev/rfkill
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

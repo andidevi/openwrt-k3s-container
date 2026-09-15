@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "openwrt.fullname" . }}
+  labels:
+    app: {{ include "openwrt.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ include "openwrt.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "openwrt.fullname" . }}
+      # Physische NICs behalten Kernel-Namen, veth-Paare bekommen feste Pod-ifNames
+      annotations:
+        "k8s.v1.cni.cncf.io/networks": {{ $nets := list }}{{- range .Values.hostInterfaces }}{{ $nets = append $nets .nadName }}{{ end }}{{- range .Values.vethInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{ join ", " $nets | quote }}
+    spec:
+      hostNetwork: false
+      containers:
+        - name: openwrt
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # /sbin/init als PID 1
+          args: ["/sbin/init"]
+          securityContext:
+            privileged: {{ .Values.security.privileged }}
+            capabilities:
+              add: {{ toJson .Values.security.capabilities.add }}
+              drop: {{ toJson .Values.security.capabilities.drop }}
+          volumeMounts:
+            - name: overlay
+              mountPath: {{ .Values.persistence.overlay.mountPath }}
+            - name: config
+              mountPath: {{ .Values.persistence.config.mountPath }}
+            - name: rfkill
+              mountPath: {{ .Values.rfkill.containerPath }}
+          resources: {{ toJson .Values.resources }}
+      volumes:
+        - name: overlay
+          persistentVolumeClaim:
+            claimName: {{ include "openwrt.fullname" . }}-overlay
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "openwrt.fullname" . }}-config
+        - name: rfkill
+          hostPath:
+            path: {{ .Values.rfkill.hostPath }}
+            type: File
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{ toJson . }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity: {{ toJson . }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{ toJson . }}
+      {{- end }}

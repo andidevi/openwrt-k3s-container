@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openwrt.fullname" . }}-overlay
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ .Values.persistence.overlay.size }}
+  {{- with .Values.persistence.overlay.storageClass }}
+  storageClassName: {{ . | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "openwrt.fullname" . }}-config
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: {{ .Values.persistence.config.size }}
+  {{- with .Values.persistence.config.storageClass }}
+  storageClassName: {{ . | quote }}
+  {{- end }}
