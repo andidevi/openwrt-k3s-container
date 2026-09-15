@@ -1,0 +1,5 @@
+[Match]
+Name=br-openwrtmgmt
+
+[Network]
+DHCP=yes
