@@ -49,7 +49,7 @@ spec:
         - name: rfkill
           hostPath:
             path: {{ .Values.rfkill.hostPath }}
-            type: File
+            type: CharDevice
       {{- with .Values.nodeSelector }}
       nodeSelector: {{ toJson . }}
       {{- end }}
