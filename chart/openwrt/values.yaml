@@ -7,8 +7,8 @@ replicaCount: 1
 
 # Multus: drei physische Interfaces via host-device komplett in den Pod verschieben
 hostInterfaces:
-  - name: wlp3s0
-    nadName: openwrt-wlp3s0
+#  - name: wlp3s0
+#    nadName: openwrt-wlp3s0
   - name: enp2s0
     nadName: openwrt-enp2s0
   - name: enp4s0f3u1u4
