@@ -44,4 +44,5 @@ buildah unmount "$container"
 #buildah push "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
 # stattdessen lokal exportieren
 buildah commit "$container" "${IMAGE_NAME}:${IMAGE_TAG}"
+rm -f "${IMAGE_NAME}-${IMAGE_TAG}".tar || true
 buildah push "${IMAGE_NAME}:${IMAGE_TAG}" docker-archive:"${IMAGE_NAME}-${IMAGE_TAG}".tar:"${IMAGE_NAME}:${IMAGE_TAG}"
