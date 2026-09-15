@@ -29,10 +29,10 @@ cp /etc/resolv.conf "$mountpoint/etc/resolv.conf"
 # 3. Pakete installieren
 buildah run "$container" apk update
 buildah run "$container" apk add $PACKAGES
-# 4. Eigene Configs ins Image injizieren (falls gewünscht)
-#if [ -d "build/configs" ]; then
-#    cp -r build/configs/* "$mountpoint/etc/config/"
-#fi
+# 4. Eigene Configs ins Image injizieren
+if [ -d "${DIRNAME}/configs" ]; then
+    cp -r "${DIRNAME}"/configs/* "$mountpoint/etc/config/"
+fi
 # 5. Finale Konfiguration & Push Vorbereitung
 rm "$mountpoint/etc/resolv.conf"
 tar -xvzf "openwrt-rootfs-${LATEST}.tgz" -C "$mountpoint" ./etc/resolv.conf

@@ -28,3 +28,22 @@ helm template openwrt ./chart/openwrt -n openwrt | less
 helm upgrade --install openwrt ./chart/openwrt -n openwrt -f my-values.yaml
 # oder: --set image.tag=neuer-tag
 ```
+
+## Hinweis: `/etc/config` liegt auf einer PVC
+
+Beim Erstinstall ist die PVC leer und überdeckt die ins Image gebauten
+Configs (`build/configs/`). Einmalig nach Pod-Start seeden:
+
+```bash
+POD=$(kubectl -n openwrt get pod -l app=openwrt-openwrt -o jsonpath='{.items[0].metadata.name}')
+# Variante A: aus dem (read-only) ROM des Containers
+kubectl -n openwrt exec -it $POD -- /bin/ash -c \
+  'cp /rom/etc/config/network /rom/etc/config/dhcp /rom/etc/config/firewall /etc/config/'
+# Variante B (falls kein /rom im Container): aus dem Repo einspielen
+for f in network dhcp firewall; do
+  kubectl -n openwrt cp build/configs/$f $POD:/etc/config/$f
+done
+kubectl -n openwrt exec -it $POD -- /bin/ash -c \
+  '/etc/init.d/network restart && /etc/init.d/dnsmasq restart'
+```
+Danach persistieren die Dateien in der PVC.
