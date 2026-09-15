@@ -15,16 +15,16 @@ hostInterfaces:
     nadName: openwrt-enp4s0
 
 # Zwei veth-Paare (Multus bridge-CNI legt jeweils ein veth-Paar an,
-# Pod-seitiges Interface trägt den gewünschten Namen)
+# Pod-seitiges Interface trägt den gewünschten Namen).
+# Keine IP-Vergabe durch k3s (leeres static-IPAM), DHCP-Server läuft im Pod (OpenWrt),
+# Host holt sich seine Adresse per systemd-networkd, sobald das Interface da ist.
 vethInterfaces:
   - nadName: openwrt-k3s
     ifName: veth-openwrtk3s
     bridge: br-openwrtk3s
-    subnet: "10.200.0.0/24"
   - nadName: openwrt-mgmt
     ifName: veth-openwrtmgmt
     bridge: br-openwrtmgmt
-    subnet: "10.201.0.0/24"
 
 security:
   privileged: false
