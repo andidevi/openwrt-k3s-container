@@ -16,15 +16,19 @@ hostInterfaces:
 
 # Zwei veth-Paare (Multus bridge-CNI legt jeweils ein veth-Paar an,
 # Pod-seitiges Interface trägt den gewünschten Namen).
-# Keine IP-Vergabe durch k3s (leeres static-IPAM), DHCP-Server läuft im Pod (OpenWrt),
+# Das Bridge-Plugin verlangt eine IPAM-Antwort (leeres static-IPAM -> "missing ip config"),
+# daher host-local mit Link-Local-Dummy. Echte Adressen: DHCP-Server im Pod (OpenWrt),
 # Host holt sich seine Adresse per systemd-networkd, sobald das Interface da ist.
+# Passt zu den Units unter doc/host/ (br-opnwrtk3s, br-opnwrtmgmt).
 vethInterfaces:
   - nadName: opnwrt-k3s
     ifName: veth-opnwrtk3s
     bridge: br-opnwrtk3s
+    dummySubnet: "169.254.200.0/24"
   - nadName: opnwrt-mgmt
     ifName: veth-opnwrtmgmt
     bridge: br-opnwrtmgmt
+    dummySubnet: "169.254.201.0/24"
 
 security:
   privileged: false

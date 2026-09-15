@@ -1,5 +1,5 @@
 [Match]
-Name=br-openwrtmgmt
+Name=br-opnwrtmgmt
 
 [Network]
 DHCP=yes

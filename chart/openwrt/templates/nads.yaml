@@ -25,7 +25,8 @@ spec:
     "type": "bridge",
     "bridge": "{{ .bridge }}",
     "ipam": {
-      "type": "static"
+      "type": "host-local",
+      "subnet": "{{ .dummySubnet }}"
     }
   }'
 {{- end }}

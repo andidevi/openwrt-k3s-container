@@ -1,5 +1,5 @@
 [Match]
-Name=br-openwrtk3s
+Name=br-opnwrtk3s
 
 [Network]
 DHCP=yes
