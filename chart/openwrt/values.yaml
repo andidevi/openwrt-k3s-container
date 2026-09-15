@@ -11,8 +11,10 @@ hostInterfaces:
 #    nadName: openwrt-wlp3s0
   - name: enp2s0
     nadName: openwrt-enp2s0
+    ifName: lan
   - name: enp4s0f3u1u4
     nadName: openwrt-enp4s0
+    ifName: wan
 
 # Zwei veth-Paare (Multus bridge-CNI legt jeweils ein veth-Paar an,
 # Pod-seitiges Interface trägt den gewünschten Namen).
@@ -22,11 +24,11 @@ hostInterfaces:
 # Passt zu den Units unter doc/host/ (br-opnwrtk3s, br-opnwrtmgmt).
 vethInterfaces:
   - nadName: opnwrt-k3s
-    ifName: veth-opnwrtk3s
+    ifName: lan-opnwrtk3s
     bridge: br-opnwrtk3s
     dummySubnet: "169.254.200.0/24"
   - nadName: opnwrt-mgmt
-    ifName: veth-opnwrtmgmt
+    ifName: lan-opnwrtmgmt
     bridge: br-opnwrtmgmt
     dummySubnet: "169.254.201.0/24"
 

@@ -15,9 +15,9 @@ spec:
     metadata:
       labels:
         app: {{ include "openwrt.fullname" . }}
-      # Physische NICs behalten Kernel-Namen, veth-Paare bekommen feste Pod-ifNames
+      # Pod-seitige Interface-Namen werden per "@ifName" fest vorgegeben
       annotations:
-        "k8s.v1.cni.cncf.io/networks": {{ $nets := list }}{{- range .Values.hostInterfaces }}{{ $nets = append $nets .nadName }}{{ end }}{{- range .Values.vethInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{ join ", " $nets | quote }}
+        "k8s.v1.cni.cncf.io/networks": {{ $nets := list }}{{- range .Values.hostInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{- range .Values.vethInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{ join ", " $nets | quote }}
     spec:
       hostNetwork: false
       containers:
