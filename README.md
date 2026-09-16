@@ -6,7 +6,7 @@ OpenWrt als Pod in k3s. Image wird unter `build/` gebaut (`openwrt-k3s:latest`, 
 
 Basis (Default-`values.yaml`):
 
-- **Image:** `openwrt-k3s:latest`, `pullPolicy: IfNotPresent`, Start via `/usr/local/bin/entrypoint.sh` (aus `doc/`, per `build.sh` ins Image gelegt: `setup.sh`, `/var/lock`, `tmate`, danach `exec /sbin/init`), 1 Replica (`Recreate`), kein `hostNetwork`
+- **Image:** `openwrt-k3s:latest`, `pullPolicy: IfNotPresent`, Start mit `/sbin/init`, 1 Replica (`Recreate`), kein `hostNetwork`
 - **Netz (Multus):** 2× `host-device`-NADs schieben `enp2s0`, `enp4s0f3u1u4` vollständig in den Pod (`wlp3s0` auskommentiert — WLAN-phy muss per `iw phy ... set netns` vom Host rüber, `host-device` kann das nicht); 2× `bridge`-NADs erzeugen veth-Paare mit Pod-Interfaces `lan-opnwrtk3s` (`br-opnwrtk3s`) und `lan-opnwrtmgmt` (`br-opnwrtmgmt`), `host-local`-IPAM mit Link-Local-Dummy (Bridge-Plugin verlangt eine IPAM-Antwort; echte Adressen per DHCP aus dem Pod, Host-Adresse via systemd-networkd, Units unter `doc/host/`)
 - **Security:** nicht privileged, Capabilities `NET_ADMIN`, `NET_RAW` (drop `ALL`)
 - **Volumes:** PVCs für `/overlay` (1Gi) und `/etc/config` (512Mi), `hostPath` (`CharDevice`) `/dev/rfkill` → `/dev/rfkill`

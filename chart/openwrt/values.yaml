@@ -5,16 +5,6 @@ image:
 
 replicaCount: 1
 
-# Start wie im alten Docker-Setup: Vorbereitung (setup.sh, /var/lock, tmate),
-# danach exec /sbin/init. Skript liegt via build.sh im Image unter
-# /usr/local/bin/entrypoint.sh.
-entrypoint:
-  command: ["/bin/ash"]
-  args: ["/usr/local/bin/entrypoint.sh"]
-  # tmate braucht für interaktive Sessions ein TTY; für reinen Log-Betrieb false lassen
-  tty: false
-  stdin: false
-
 # Multus: drei physische Interfaces via host-device komplett in den Pod verschieben
 hostInterfaces:
 #  - name: wlp3s0

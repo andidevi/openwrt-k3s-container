@@ -33,15 +33,11 @@ buildah run "$container" apk add $PACKAGES
 if [ -d "${DIRNAME}/configs" ]; then
     cp -r "${DIRNAME}"/configs/* "$mountpoint/etc/config/"
 fi
-# 4b. Entrypoint-Skript ins Image legen (Vorbereitung wie im alten Docker-Setup: setup.sh, /var/lock, tmate)
-mkdir -p "$mountpoint/usr/local/bin" || true
-cp "${DIRNAME}/entrypoint.sh" "$mountpoint/usr/local/bin/entrypoint.sh"
-chmod +x "$mountpoint/usr/local/bin/entrypoint.sh"
 # 5. Finale Konfiguration & Push Vorbereitung
 rm "$mountpoint/etc/resolv.conf"
 tar -xvzf "openwrt-rootfs-${LATEST}.tgz" -C "$mountpoint" ./etc/resolv.conf
 ls -ld "$mountpoint" "$mountpoint/etc" "$mountpoint/etc/resolv.conf" || true
-buildah config --entrypoint '["/bin/ash", "/usr/local/bin/entrypoint.sh"]' "$container"
+buildah config --entrypoint '["/sbin/init"]' "$container"
 buildah unmount "$container"
 ## In die lokale Cluster-Registry committen/pushen
 #buildah commit "$container" "${IMAGE_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"

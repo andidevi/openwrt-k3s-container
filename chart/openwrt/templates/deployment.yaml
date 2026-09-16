@@ -24,11 +24,8 @@ spec:
         - name: openwrt
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          # /sbin/init als PID 1 (via entrypoint.sh mit tmate-Vorbereitung)
-          command: {{ toJson .Values.entrypoint.command }}
-          args: {{ toJson .Values.entrypoint.args }}
-          stdin: {{ .Values.entrypoint.stdin }}
-          tty: {{ .Values.entrypoint.tty }}
+          # /sbin/init als PID 1
+          args: ["/sbin/init"]
           securityContext:
             privileged: {{ .Values.security.privileged }}
             capabilities:
