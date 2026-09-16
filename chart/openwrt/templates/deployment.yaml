@@ -20,6 +20,8 @@ spec:
         "k8s.v1.cni.cncf.io/networks": {{ $nets := list }}{{- range .Values.hostInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{- range .Values.vethInterfaces }}{{ $nets = append $nets (printf "%s@%s" .nadName .ifName) }}{{ end }}{{ join ", " $nets | quote }}
     spec:
       hostNetwork: false
+      # Kein k8s-API-Token im Pod (kein /var/run/secrets-Zugriff nötig)
+      automountServiceAccountToken: false
       containers:
         - name: openwrt
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

@@ -38,6 +38,7 @@ security:
     add:
       - NET_ADMIN
       - NET_RAW
+      - SYS_ADMIN
     drop:
       - ALL
 

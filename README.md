@@ -8,7 +8,7 @@ Basis (Default-`values.yaml`):
 
 - **Image:** `openwrt-k3s:latest`, `pullPolicy: IfNotPresent`, Start mit `/sbin/init`, 1 Replica (`Recreate`), kein `hostNetwork`
 - **Netz (Multus):** 2× `host-device`-NADs schieben `enp2s0`, `enp4s0f3u1u4` vollständig in den Pod (`wlp3s0` auskommentiert — WLAN-phy muss per `iw phy ... set netns` vom Host rüber, `host-device` kann das nicht); 2× `bridge`-NADs erzeugen veth-Paare mit Pod-Interfaces `lan-opnwrtk3s` (`br-opnwrtk3s`) und `lan-opnwrtmgmt` (`br-opnwrtmgmt`), `host-local`-IPAM mit Link-Local-Dummy (Bridge-Plugin verlangt eine IPAM-Antwort; echte Adressen per DHCP aus dem Pod, Host-Adresse via systemd-networkd, Units unter `doc/host/`)
-- **Security:** nicht privileged, Capabilities `NET_ADMIN`, `NET_RAW` (drop `ALL`)
+- **Security:** nicht privileged, Capabilities `NET_ADMIN`, `NET_RAW`, `SYS_ADMIN` (drop `ALL`; `SYS_ADMIN` braucht procd für Mounts/Service-Spawns), kein ServiceAccount-Token im Pod
 - **Volumes:** PVCs für `/overlay` (1Gi) und `/etc/config` (512Mi), `hostPath` (`CharDevice`) `/dev/rfkill` → `/dev/rfkill`
 
 ## Installieren / Aktualisieren 
